@@ -297,3 +297,158 @@ to find the best Taylor series approximation.
 14. **Check for Convergence:** - Until \( |x(r+1) - x(r)| <= 𝜉 \).\
     (where
     𝜉 is a small threshold) is met.
+
+## Simulation Results:
+
+<div style="text-align: center;">
+    <img src="image-17.png">
+</div>
+
+#### Room and Bulb Configuration:
+
+1. **Room Dimensions:**
+
+   - 6 m × 6 m floor, 3 m height.
+   - Tests illumination uniformity and LED-user associations.
+
+2. **Hemispherical Bulb:**
+   - 40 cm radius, 65 LEDs in 6 layers plus 1 central LED.
+   - Supports spatial reuse and data transmission efficiency.
+
+#### LED and Receiver Specifications:
+
+3. **LED and Photo-Detector Dimensions:**
+   - LED radius \( r<sub>t</sub> = 1.5 \) cm, PD radius \( r<sub>r</sub> = 3.75 \) cm.
+   - Key for light cone and proximity calculations in Nearest User Assignment.
+
+#### Bandwidth and Performance Targets:
+
+4. **Bandwidth:**
+
+   - 20 MHz bandwidth.
+   - Affects communication efficiency constraint.
+
+5. **Target Illumination and Data Rate:**
+   - Minimum uniformity \( I <sub>min</sub> = 0.7 \), minimum rate \( R <sub>u</sub> = 1 \) Mbps.
+   - Directly tied to illumination and QoS constraints.
+
+#### Simulation Parameters:
+
+6. **Random User Locations:**
+
+   - 100 runs with random locations.
+   - Tests robustness of TSS and power optimization.
+
+7. **Random Number Seeding:**
+   - Prime numbers starting with 11.
+   - Ensures reproducibility and randomness.
+
+#### Performance Evaluation:
+
+8. **Confidence Intervals:**
+   - 95% confidence intervals.
+   - Provides reliability and accuracy in evaluating TSS effectiveness.
+
+### 1) Effect on Total Power Consumption of the System:
+
+---
+
+#### Overview:
+
+- **Objective Function:** Minimize total power consumption.
+- **Observation:** Total power consumption rises with more users, but remains controlled.
+
+#### Key Points:
+
+1. **Total Power Consumption:**
+
+   - The system’s total power consumption increases with more users.
+   - Maintains minimum data rate and illumination uniformity constraints.
+
+2. **Average Transmit Power Per User:**
+
+   - The average transmit power per user decreases as the number of users increases.
+   - When fewer users are present, more LEDs are available per user, leading to higher power allocation per user. With more users, LEDs are shared, reducing per-user power.
+
+3. **LED-User Association Adjustment:**
+
+   - The LED-user associations adjust to maintain the required QoS and illumination as user numbers grow.
+
+   - This reflects the algorithm’s effectiveness in dynamically optimizing LED-user associations and power allocation to meet constraints.
+
+#### Observation:
+
+1. **Power Decay Analysis:**
+
+   - Comparison of power decay per user with increasing users, using
+     1/U function for divergence angles θ<sub>d</sub> = 20 and 80 deg.
+
+   - Shows wider angles lead to slower power decay due to higher interference, requiring higher transmit power.
+
+2. **Interference and Divergence Angle:**
+   - Wider divergence angles cause more interference, needing more transmit power to maintain Signal-to-Interference-plus-Noise Ratio (SINR).
+   - Demonstrates the trade-off between beam width and power efficiency, highlighting the importance of optimizing divergence angles.
+
+<div style="text-align: center;">
+    <img src="image-18.png">
+</div>
+
+### 2) Effect on Data Rate:
+
+---
+
+#### Key Points:
+
+- Ensure a minimum data rate to maintain Quality of Service (QoS) for all users, as the number of users increases.
+
+#### Observation:
+
+- The minimum data rate decreases as the number of users increases but remains within acceptable limits.
+- This aligns with the minimum rate QoS constraint, ensuring each user receives the required data rate despite user density changes.
+
+#### Trade-Offs and Divergence Angles:
+
+1. **Divergence Angle Impact:**
+
+   - **Observation:** Wider angles offer higher rates for fewer users but struggle with more users.
+   - **Relation:** Highlights trade-off between interference management and data rate, crucial for LED-user associations and power allocations.
+
+2. **Narrower Divergence Angles:**
+   - Narrower angles provide lower initial data rates but better maintain them with increasing users.
+
+<div style="text-align: center;">
+    <img src="image-19.png">
+</div>
+
+### 3) System Analysis for different LED Divergence Angles:
+
+---
+
+#### Overview:
+
+- Examine the impact of LED divergence angles on total power consumption, and minimum and average data rates.
+- **Parameters:** Analysis for U=5,10,20 users and divergence angles θ<sub>d</sub> = 20 to 120 step 10.
+
+#### Observation:
+
+1. **Total Power Consumption:**
+
+   - Less power needed beyond θ<sub>d</sub> = 60.
+   - Wider angles enhance power efficiency, aligning with LEDs’ power budget constraint.
+
+2. **Minimum Data Rate:**
+
+   - Wider angles, beyond θ<sub>d</sub> = 60, generally support the minimum data rate required for users.
+   - This supports the minimum rate QoS constraint, ensuring each user meets the required data rate.
+
+3. **Average Data Rate:**
+
+   - Increases significantly with angles more than 40 deg., peaking around 70 deg..
+
+4. **Optimal Range for Divergence Angles:**
+   - Best performance between 60 and 90 deg.
+   - This range provides a balance between maintaining data rates and managing power consumption, optimizing LED-user associations and power allocations.
+
+<div style="text-align: center;">
+    <img src="image-20.png">
+</div>
