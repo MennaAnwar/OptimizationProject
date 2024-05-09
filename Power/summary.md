@@ -87,7 +87,7 @@ association and illumination uniformity constraints. So, the
 optimization problem can be written as:
 
 <div style="text-align: center;">
-    <img src="image-2.png" alt="Optimization Problem">
+    <img src="image-2.png">
 </div>
 
 **where:**
@@ -143,7 +143,7 @@ Therefore, a Two-Stage Solution (TSS) as a practical and efficient solution with
 >    - Use the resulting LED-User association matrix \( ϵ<sub>mu</sub> \) for further optimization.
 
 <div style="text-align: center;">
-    <img src="image-5.png" alt="Optimization Problem">
+    <img src="image-5.png">
 </div>
 
 ### 2) Power Optimization:
@@ -153,7 +153,7 @@ Therefore, a Two-Stage Solution (TSS) as a practical and efficient solution with
 For given LED-user association, the optimization problem **P0** that optimizes LEDs’ power can be written as:
 
 <div style="text-align: center;">
-    <img src="image-6.png" alt="Optimization Problem">
+    <img src="image-6.png">
 </div>
 
 the objective function is a convex function
@@ -163,6 +163,137 @@ into a convex one in order to solve the problem efficiently.
 Therefore, constraint (10) can be re-written as:
 
 <div style="text-align: center;">
-    <img src="image-7.png" alt="Optimization Problem">
-    <img src="image-8.png" alt="Optimization Problem">
+    <img src="image-7.png">
+    <img src="image-8.png">
 </div>
+
+It can be seen that the RHS of (12)
+is a linear function, thus we only need to approximate the
+LHS. Therefore, we propose to use same first order Taylor expansion approximation in order to convert the LHS of (12)
+into a convex one as the following:
+
+<div style="text-align: center;">
+    <img src="image-13.png">
+    <img src="image-15.png">
+</div>
+
+After the approximation,
+the optimization problem **P1** becomes a convex optimization
+problem and it can be solved using standard convex optimization techniques.\
+Finally, we propose to use Successive
+Convex Approximation (SCA) approach
+to find the best Taylor series approximation.
+
+> **Successive Convex Approximation (SCA):** \
+> **Purpose:**\
+> To iteratively solve a non-convex optimization problem by approximating it with convex sub-problems, which are easier to solve.
+>
+> **Steps Involved in SCA:**
+>
+> **Initial Problem Setup:**
+>
+> - Start with a non-convex optimization problem that needs to be solved.
+> - Example: Minimizing LED power while ensuring QoS and illumination constraints.
+>
+> **Approximate the Problem:**
+>
+> - Use a Taylor series or other approximation methods to linearize or convexify the non-convex parts of the problem.
+> - This transforms the original problem into a convex sub-problem that can be solved more easily.
+>
+> **Solve the Convex Sub-Problem:**
+>
+> - Solve the approximated convex problem using standard convex optimization techniques.
+> - Obtain a solution that is optimal for the convexified problem.
+>
+> **Update and Iterate:**
+>
+> - Update the variables based on the solution obtained.
+> - Use this solution as the starting point for the next iteration.
+> - Re-approximate the original problem around the new solution, creating a new convex sub-problem.
+>
+> **Convergence Check:**
+>
+> - Check if the solution has converged, i.e., if the changes in objective value or variables are below a predefined threshold.
+> - If not, repeat the approximation and solving steps until convergence is achieved.
+>
+> **Final Solution:**
+>
+> - The final solution is an approximation to the original non-convex problem, obtained after several iterations.
+
+## Algorithm used:
+
+<div style="text-align: center;">
+    <img src="image-16.png">
+</div>
+
+### Algorithm explanation:
+
+---
+
+### Algorithm 1: Algorithm for TSS
+
+#### **Initialization:**
+
+1. **Set Initial Association Matrix:**
+
+   - Initialize ϵ<sub>mu</sub> = 0 for all \( m \) and \( u \).
+
+2. **Initialize Variables:**
+   - Set d to 0 : A variable to hold the distance between the center of the light cone and the user.
+   - Set d<sub>min</sub> to ∞ : A variable to keep track of the minimum distance found..
+   - Set 𝑛 to 0: A variable to identify the index of the nearest user.
+
+#### **Nearest User Assignment:**
+
+3. **Iterate Over Each LED:**
+
+   - For each LED 𝑚 from 1 to 𝑀
+
+4. **Iterate Over Each User:**
+
+   - For u from 1 to U.
+
+5. **Check User Inside Light Cone:**
+
+   - If user u is inside the cone of LED m.
+
+6. **First Distance Calculation:**
+
+   - If \( d = 0 \):
+     - Calculate 𝑑 as the distance between the center of the cone and the user 𝑢.
+     - Set \( d<sub>min</sub> = d \).
+     - Set \( n = u \) : Set 𝑛 to the current user’s index.
+
+7. **Subsequent Distance Calculations:**
+
+   - If \( d != 0 \):
+     - Calculate \( d \).
+     - If \( d < d<sub>min</sub> \):
+       - Update \( d<sub>min</sub>\).
+       - Update \( n \).
+
+8. **End User Loop:**
+
+9. **Assign Nearest User:**
+   - If \( n != 0 \):
+     - Set \( ϵ<sub>mu</sub> = 1 \).
+
+#### **Power Optimization:**
+
+10. **Initial Power Values:**
+
+    - Select initial power values \( P<sub>m</sub> \).
+
+11. **Repeat Optimization Steps.**
+
+12. **Optimization Iteration:**
+
+    - Set \( r = 1 \) : Initialize the iteration counter..
+
+13. **Solve Optimization Problem:**
+
+    - Solve with \( ϵ<sub>mu</sub> \) using the interior-point method to find \( P<sub>m</sub> \).
+
+14. **Check for Convergence:** - Until \( |x(r+1) - x(r)| <= 𝜉 \).\
+    (where
+    𝜉 is a small threshold) is met.
