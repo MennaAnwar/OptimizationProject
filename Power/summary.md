@@ -48,18 +48,35 @@
   is possible to place these sensors at a place of interest,
   however, we assume that they are uniformly distributed, in a lattice placement pattern, to the room floor.
 
-- A binary variable ϵ
+- **LED-User Association:**\
+   A binary variable ϵ
   <sub>mu</sub> that indicates the
   association between LED m and user u which is given as
   follows:
-  <div style="text-align: center;">
-  <img src="image-3.png" alt="">
-  <img src="image-4.png">
-  </div>
+     <div style="text-align: center;">
+     <img src="image-3.png" alt="">
+     <img src="image-4.png">
+     </div>
 
   we assume that user u can be associated to many
   LEDs at the same time. In contrary, an LED is not allowed to
   associate with more than one user simultaneously
+
+  - **Channel Model:**
+    <div style="text-align: center;">
+     <img src="image-10.png">
+     <img src="image-9.png">
+     </div>
+
+- **Signal-to-Interference and Noise Ratio (SINR) Calculation:**
+  <div style="text-align: center;">
+    <img src="image-11.png">
+  </div>
+
+- **Illumination Uniformity:**
+<div style="text-align: center;">
+   <img src="image-12.png">
+ </div>
 
 ## Problem Formulation:
 
@@ -75,7 +92,7 @@ optimization problem can be written as:
 
 **where:**
 
-- _(2) and (8)_ represent the LEDs’ power budget and association constraints.
+- _(2) and (8)_ represent the LEDs’ power budget and association constraints.
 - (9) represents the illumination uniformity
   constraint.\
   I<sub>min</sub> is defined as the minimum acceptable illumination uniformity threshold which we set to be 0.7.
