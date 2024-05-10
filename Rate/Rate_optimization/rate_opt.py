@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Function used in constraint 2
 def c2(M: cp.Variable, v) -> cp.Variable:
     M_res = M
-    M_res = M_res - cp.diag(cp.diag(M_res)) + cp.diag(v)
+    M_res = (M_res - cp.diag(cp.diag(M_res)) + cp.diag(v))/np.sqrt(3)
     return cp.norm(M_res, axis=1)
 
 # Problem constants
