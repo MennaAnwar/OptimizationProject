@@ -13,3 +13,10 @@ w_k * s_k -> vector of length l
 K number of users
 L number of lamps
 g
+
+
+gt(kxl) W(lxK) = M(kxk)
+
+a b c
+d e f 
+g h i
