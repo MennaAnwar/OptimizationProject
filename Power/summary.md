@@ -329,7 +329,8 @@ to find the best Taylor series approximation.
    - Affects communication efficiency constraint.
 
 5. **Target Illumination and Data Rate:**
-   - Minimum uniformity \( I <sub>min</sub> = 0.7 \), minimum rate \( R <sub>u</sub> = 1 \) Mbps.
+   - Minimum uniformity \( I <sub>min</sub> = 0.7 \), minimum rate \( R <sub>u</sub> = 1 \) Mbps ( minimum
+data rate per user of R¯u = 1 Mbps.).
    - Directly tied to illumination and QoS constraints.
 
 #### Simulation Parameters:

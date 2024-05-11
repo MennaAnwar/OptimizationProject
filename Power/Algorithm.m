@@ -1,0 +1,194 @@
+clc;
+clear all;
+
+% Parameters
+M = 65; % Total number of LEDs
+U = 2; % Number of Users
+N = 100; % Number of sensors for illumination
+B = 20e6; % Bandwidth in Hz
+N0 = 2.5e-20; % AWGN spectral density
+I_min = 0.07; % Minimum illumination uniformity
+R_u_min = 1e6; % Minimum data rate per user in bps
+theta_half = 60; % Divergence half-angle in degrees
+
+% Assumed Initial Values
+P_max = 2; % Initial maximum power for each LED in Watts
+A_m = 2e-4; % Initial area of the photodetector in square meters
+phi_c = theta_half; % Cutoff angle in degrees
+
+% Convert angles to radians
+theta_half_rad = deg2rad(theta_half);
+phi_c_rad = deg2rad(phi_c);
+
+% Calculate Lambertian order (q)
+q = -log(2) / log(cos(theta_half_rad));
+
+% LED distribution across layers
+LED_distribution = [11, 14, 17, 10, 7, 5, 1];
+layer_positions = [1, 1, 1, 1, 1, 1, 0]; % Indicator for each layer (1 for layers, 0 for center)
+
+% LED and user coordinates
+radius = 0.4; % Radius of the hemispherical bulb in meters
+LED_positions = [];
+
+% Generate LED positions based on distribution
+for layer = 1:length(LED_distribution)
+    num_LEDs = LED_distribution(layer);
+    theta = linspace(0, 2*pi, num_LEDs + 1);
+    theta(end) = []; % Remove duplicate point
+    phi = (layer / length(LED_distribution)) * pi / 2; % Spread layers over hemisphere
+    
+    for k = 1:num_LEDs
+        x = radius * sin(phi) * cos(theta(k));
+        y = radius * sin(phi) * sin(theta(k));
+        z = radius * cos(phi);
+        LED_positions = [LED_positions; x, y, z];
+    end
+end
+
+% Add center LED position
+LED_positions = [LED_positions; 0, 0, 0];
+
+% Prime numbers greater than or equal to 11
+prime_numbers = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139];
+
+% Assign user positions with prime number coordinates
+user_positions = [
+    prime_numbers(1), prime_numbers(2), prime_numbers(3); % User 1
+    prime_numbers(4), prime_numbers(5), prime_numbers(6)  % User 2
+];
+
+% Iterative adjustment for P_max and A_m
+max_outer_iterations = 10;
+outer_tolerance = 1e-3;
+
+for outer_iter = 1:max_outer_iterations
+    
+    % Initial Power and Associations
+    P = P_max * ones(M, 1);
+    epsilon = zeros(M, U);
+    
+    % LED-User Association
+    for m = 1:M
+        min_distance = inf;
+        closest_user = 0;
+        for u = 1:U
+            distance = norm(LED_positions(m, :) - user_positions(u, :));
+            if distance < min_distance
+                min_distance = distance;
+                closest_user = u;
+            end
+        end
+        if closest_user > 0
+            epsilon(m, closest_user) = 1;
+        end
+    end
+    
+    % Power Optimization
+    Cu = 2.^(R_u_min/B) - 1;
+    max_iterations = 100;
+    tolerance = 1e-3;
+
+    for iter = 1:max_iterations
+        P_old = P;
+        
+        % Update beta values
+        beta = zeros(U, 1);
+        for u = 1:U
+            for m = 1:M
+                if epsilon(m, u) == 1
+                    distance = norm(LED_positions(m, :) - user_positions(u, :));
+                    phi_angle = acos(dot(LED_positions(m, :), user_positions(u, :)) / (norm(LED_positions(m, :)) * norm(user_positions(u, :))));
+                    if phi_angle <= phi_c_rad
+                        h = (q + 1) * A_m * cos(phi_angle)^q * cos(phi_angle) / (2 * pi * distance^2); % Lambertian model with q
+                        beta(u) = beta(u) + h * P(m);
+                    end
+                end
+            end
+        end
+        
+        % Solve the convex problem
+        for u = 1:U
+            sum_interference = sum(beta) - beta(u);
+            epsilon_sum = sum(epsilon(:, u)); % Sum of epsilon entries for user u
+            if epsilon_sum > 0
+                P_new = (Cu * N0 * B + Cu * sum_interference) / (beta(u) + Cu * epsilon_sum);
+                P_new = min(P_new, P_max); % Ensure power does not exceed maximum
+                if P_new > 0
+                    P(epsilon(:, u) == 1) = P_new;
+                end
+            end
+        end
+        
+
+    end
+
+    % Illumination Uniformity Calculation
+    sigma = zeros(N, 1);
+    sensor_positions = rand(N, 3) * 6; % Random sensor positions
+
+    for n = 1:N
+        for m = 1:M
+            distance = norm(LED_positions(m, :) - sensor_positions(n, :));
+            phi_angle = acos(dot(LED_positions(m, :), sensor_positions(n, :)) / (norm(LED_positions(m, :)) * norm(sensor_positions(n, :))));
+            if phi_angle <= phi_c_rad
+                h = (q + 1) * A_m * cos(phi_angle)^q * cos(phi_angle) / (2 * pi * distance^2); % Lambertian model with q
+                sigma(n) = sigma(n) + P(m) * h;
+            end
+        end
+    end
+
+    uniformity = min(sigma) / mean(sigma);
+
+    % Adjust power if uniformity is not satisfied
+    if uniformity < I_min
+        disp('Illumination uniformity constraint not satisfied. Adjusting power...');
+        adjustment_factor = I_min / uniformity;
+        P = min(P * adjustment_factor, P_max); % Adjust the power and ensure it does not exceed P_max
+        
+        % Recalculate uniformity after adjustment
+        sigma = zeros(N, 1);
+        for n = 1:N
+            for m = 1:M
+                distance = norm(LED_positions(m, :) - sensor_positions(n, :));
+                phi_angle = acos(dot(LED_positions(m, :), sensor_positions(n, :)) / (norm(LED_positions(m, :)) * norm(sensor_positions(n, :))));
+                if phi_angle <= phi_c_rad
+                    h = (q + 1) * A_m * cos(phi_angle)^q * cos(phi_angle) / (2 * pi * distance^2); % Lambertian model with q
+                    sigma(n) = sigma(n) + P(m) * h;
+                end
+            end
+        end
+        uniformity = min(sigma) / mean(sigma);
+    end
+    
+end
+
+% Ensure power constraints and uniformity
+for m = 1:M
+    if P(m) > P_max
+        P(m) = P_max;
+    end
+end
+
+% Final check for constraints
+final_sigma = zeros(N, 1);
+for n = 1:N
+    for m = 1:M
+        distance = norm(LED_positions(m, :) - sensor_positions(n, :));
+        phi_angle = acos(dot(LED_positions(m, :), sensor_positions(n, :)) / (norm(LED_positions(m, :)) * norm(sensor_positions(n, :))));
+        if phi_angle <= phi_c_rad
+            h = (q + 1) * A_m * cos(phi_angle)^q * cos(phi_angle) / (2 * pi * distance^2); % Lambertian model with q
+            final_sigma(n) = final_sigma(n) + P(m) * h;
+        end
+    end
+end
+final_uniformity = min(final_sigma) / mean(final_sigma);
+
+% Check if final power settings are optimized
+if final_uniformity >= I_min
+    disp('Power optimization successful and illumination uniformity constraint satisfied.');
+else
+    disp('Power optimization not fully successful.');
+end
+
+disp(['Final Illumination Uniformity: ', num2str(final_uniformity)]);
