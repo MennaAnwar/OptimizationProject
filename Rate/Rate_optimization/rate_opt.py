@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 # Function used in constraint 2
 def c2(M: cp.Variable, v) -> cp.Variable:
     M_res = M
-    M_res = (M_res - cp.diag(cp.diag(M_res)) + cp.diag(v))/np.sqrt(3)
+    M_res = (M_res - cp.diag(cp.diag(M_res))/np.sqrt(3) + cp.diag(v))
     return cp.norm(M_res, axis=1)
 
 # Problem constants
-K = 3
-L = 9
-g = np.random.rand(L, K)
-p = np.ones(L) * 10
+K = 3 # Number of users
+L = 9 # Number of lamps
+g = np.random.rand(L, K) # Describe the channel
+p = np.ones(L) * 10 # Max power for each lamp
 
 sigma_max = 10**-3
 sigma_n = np.random.rand(K)*sigma_max
@@ -24,7 +24,6 @@ opt_rate = np.zeros(iterations)
 
 # Iterate over the problem
 for j in range(iterations):
-    print(j)
     # Problem variables
     w = cp.Variable((L, K))
     u = cp.Variable(K)
@@ -53,6 +52,7 @@ for j in range(iterations):
 
     # add this rate to opt_rate
     opt_rate[j] = problem.value
+# End of loop
 
 # Algorithm output
 print("u = ", u.value)
