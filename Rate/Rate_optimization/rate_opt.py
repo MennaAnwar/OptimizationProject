@@ -20,7 +20,7 @@ sigma_n = np.random.rand(K)*sigma_max
 # Initial guess for theta
 theta = np.ones(K)
 iterations = 500
-opt_rate = np.zeros(iterations) - 1
+opt_rate = []
 
 # Iterate over the problem
 for j in range(iterations):
@@ -52,21 +52,16 @@ for j in range(iterations):
         theta = np.sqrt(uj)/vj
 
         # add this rate to opt_rate
-        opt_rate[j] = problem.value
+        opt_rate.append(problem.value)
     except:
         break
 # End of loop
 
 # Algorithm output
-print("u = ", u.value)
-print("v = ", v.value)
-print("w = ", w.value)
-print("optimal rate = ", problem.value)
-
+print("Optimal rate = ", opt_rate[-1])
 # Plot output
-res = opt_rate[opt_rate != -1]
-n = np.arange(1, len(res)+1)
-plt.plot(n,res)
+n = np.arange(1, len(opt_rate)+1)
+plt.plot(n,opt_rate)
 plt.xlabel("Iteration number")
 plt.ylabel("Optimal rate")
 plt.show()
