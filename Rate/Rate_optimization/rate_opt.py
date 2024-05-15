@@ -12,11 +12,10 @@ def c2(M: cp.Variable, v) -> cp.Variable:
 K = 3 # Number of users
 L = 9 # Number of lamps
 g = np.loadtxt("my_grindset") # Describe the channel
-# p = np.ones(L) * 100 # Max power for each lamp
 p = np.array([7.74903481e-07, 1.44155904e+01, 6.11280099e+00, 3.00493992e+00, 1.81572075e-06, 6.07339084e+00, 1.07330140e-06, 1.63758571e+01, 5.73877204e+00])
 
 # sigma_max = 10**-7
-sigma_n = np.loadtxt("my_sigma")
+sigma_n = np.ones(K)*10**-11
 
 # Initial guess for theta
 theta = np.ones(K)
@@ -64,7 +63,6 @@ print("Optimal rate = ", opt_rate[-1])
 n = np.arange(1, len(opt_rate)+1)
 if len(n) > 20:
     np.savetxt("my_grindset", g)
-    np.savetxt("my_sigma", sigma_n)
 
 plt.plot(n,opt_rate)
 plt.xlabel("Iteration number")
