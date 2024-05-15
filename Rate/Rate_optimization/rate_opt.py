@@ -5,17 +5,18 @@ import matplotlib.pyplot as plt
 # Function used in constraint 2
 def c2(M: cp.Variable, v) -> cp.Variable:
     M_res = M
-    M_res = (M_res - cp.diag(cp.diag(M_res))) + cp.diag(v)
+    M_res = (M_res - cp.diag(cp.diag(M_res)))/np.sqrt(3) + cp.diag(v)
     return cp.norm(M_res, axis=1)
 
 # Problem constants
 K = 3 # Number of users
 L = 9 # Number of lamps
-g = np.random.rayleigh(1, (L, K)) # Describe the channel
-p = np.ones(L) * 10 # Max power for each lamp
+g = np.loadtxt("my_grindset") # Describe the channel
+# p = np.ones(L) * 100 # Max power for each lamp
+p = np.array([7.74903481e-07, 1.44155904e+01, 6.11280099e+00, 3.00493992e+00, 1.81572075e-06, 6.07339084e+00, 1.07330140e-06, 1.63758571e+01, 5.73877204e+00])
 
-sigma_max = 10**-10
-sigma_n = np.random.rand(K)*sigma_max
+# sigma_max = 10**-7
+sigma_n = np.loadtxt("my_sigma")
 
 # Initial guess for theta
 theta = np.ones(K)
@@ -61,6 +62,10 @@ for j in range(iterations):
 print("Optimal rate = ", opt_rate[-1])
 # Plot output
 n = np.arange(1, len(opt_rate)+1)
+if len(n) > 20:
+    np.savetxt("my_grindset", g)
+    np.savetxt("my_sigma", sigma_n)
+
 plt.plot(n,opt_rate)
 plt.xlabel("Iteration number")
 plt.ylabel("Optimal rate")
