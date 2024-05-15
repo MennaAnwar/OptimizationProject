@@ -8,6 +8,16 @@ def c2(M: cp.Variable, v) -> cp.Variable:
     M_res = (M_res - cp.diag(cp.diag(M_res)))/np.sqrt(3) + cp.diag(v)
     return cp.norm(M_res, axis=1)
 
+# Function to calculate a weighted moving average
+def calculate_ema(values, alpha):
+    ema = values[0]  # start with the first value
+
+    for value in values[1:]:
+        ema = alpha * value + (1 - alpha) * ema
+    
+    return ema
+
+
 # Problem constants
 K = 3 # Number of users
 L = 9 # Number of lamps
@@ -58,13 +68,27 @@ for j in range(iterations):
 # End of loop
 
 # Algorithm output
-print("Optimal rate = ", opt_rate[-1])
+print("final optimal rate = ", opt_rate[-1])
 # Plot output
 n = np.arange(1, len(opt_rate)+1)
 if len(n) > 20:
     np.savetxt("my_grindset", g)
 
+
 plt.plot(n,opt_rate)
 plt.xlabel("Iteration number")
 plt.ylabel("Optimal rate")
 plt.show()
+
+# Take EMA and graph it with alpha
+ema_values = []
+alpha_values = np.arange(0, 1.1, 0.1)
+
+for alpha in alpha_values:
+    ema_values.append(calculate_ema(opt_rate, alpha))
+
+plt.plot(alpha_values, ema_values)
+plt.xlabel("Alpha")
+plt.ylabel("EMA Rate")
+plt.show()
+
