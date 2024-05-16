@@ -40,7 +40,7 @@ p = cp.Variable(NL, nonneg=True)
 # FIM == J(p) = (I3 (*k*) p)T * Gamma where (*k*) is Kronecker product
 def FisherInformationMatrix(p):
     p_matrix = cp.reshape(p, (NL, 1))  # reshape p to a column matrix
-    return ( cp.kron(p_matrix, np.eye(3)).T @ gamma )
+    return ( cp.kron(np.eye(3), p_matrix).T @ gamma )
 
 
 # Define the objective function (minimize total power)
