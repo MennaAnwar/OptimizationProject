@@ -18,3 +18,42 @@ where $\vec{s}$ is the vector containing the symbols of each user ($s_k$ is the 
 
 
 ## What are the tools used to solve this problem
+
+
+<!------------------------------------------------------------------------->
+
+# Problem statement
+- Explain localization `Sherif`
+
+- Our goal is to maximize transmission rate under power and channel limitations at acceptable localization accuracy. `Hesham`
+
+## System description
+
+- System has L LEDs (transmitters), and K users (receivers) `Hesham`
+
+- Localization is done using fingerprinting (explain) `Sherif`
+
+## Problem Formulation and solution
+
+- Power problem (Objective function and constraints) `Aly`
+
+- Show solution (math and code) `Menna`
+
+- Rate problem (Objective function and constraints) `Marawan`
+
+- Show solution `Yahia`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
