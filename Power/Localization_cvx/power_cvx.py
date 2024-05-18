@@ -58,6 +58,7 @@ for i in range(iterations):
     # constraints 
     constraints = [
         cp.trace(cp.inv_pos(FisherInformationMatrix(p))) <= epsilon[i],
+        p >= 0,
         cp.sum(p) <= totalElecPow,
         p <= elecPow_up,
         p >= elecPow_low
