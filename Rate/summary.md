@@ -22,7 +22,7 @@ where $\vec{s}$ is the vector containing the symbols of each user ($s_k$ is the 
 
 <!------------------------------------------------------------------------->
 
-# Problem statement
+## Problem statement
 - Explain localization `Sherif`
 
 - Our goal is to maximize transmission rate under power and channel limitations at acceptable localization accuracy. `Hesham`
