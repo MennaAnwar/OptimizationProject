@@ -24,11 +24,14 @@ minPowArray = np.empty(iterations)
 allocatedPow_CRLB = np.empty(NL)
 
 # upper and lower bounds for electrical power (W)
-elecPow_up = 5
+elecPow_up = 6
 elecPow_low = 0.5
 
+# max electric power for all transmitters combined
+totalElecPow = 24
+
 # assumed electrical-to-optical power conversion efficiency
-powConvEff = 0.25
+powConvEff = 1
 
 
 ### Optimization Problem Variable ###
@@ -55,7 +58,7 @@ for i in range(iterations):
     # constraints 
     constraints = [
         cp.trace(cp.inv_pos(FisherInformationMatrix(p))) <= epsilon[i],
-        p >= 0, 
+        cp.sum(p) <= totalElecPow,
         p <= elecPow_up,
         p >= elecPow_low
     ]
