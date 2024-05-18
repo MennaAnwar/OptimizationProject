@@ -21,7 +21,7 @@ def calculate_ema(values, alpha):
 # Problem constants
 K = 3 # Number of users
 L = 9 # Number of lamps
-g = np.loadtxt("my_grindset") # Describe the channel
+G = np.loadtxt("my_grindset") # Describe the channel
 p = np.array([7.74903481e-07, 1.44155904e+01, 6.11280099e+00, 3.00493992e+00, 1.81572075e-06, 6.07339084e+00, 1.07330140e-06, 1.63758571e+01, 5.73877204e+00])
 
 # sigma_max = 10**-7
@@ -44,7 +44,7 @@ for j in range(iterations):
     objective = cp.Maximize(cp.sum(0.5*cp.log(1+2*u/(np.pi*np.e))))
 
     # g.T * w will be used a lot in the constraints so it is easier to define it here
-    M = g.T @ w
+    M = G.T @ w
 
 
     constraints = [
@@ -72,7 +72,7 @@ print("final optimal rate = ", opt_rate[-1])
 # Plot output
 n = np.arange(1, len(opt_rate)+1)
 if len(n) > 20:
-    np.savetxt("my_grindset", g)
+    np.savetxt("my_grindset", G)
 
 
 plt.plot(n,opt_rate)
