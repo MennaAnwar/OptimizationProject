@@ -28,7 +28,7 @@ elecPow_up = 5
 elecPow_low = 0.5
 
 # assumed electrical-to-optical power conversion efficiency
-powConvEff = 0.25
+powConvEff = 1
 
 
 ### Optimization Problem Variable ###
