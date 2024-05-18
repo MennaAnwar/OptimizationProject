@@ -20,9 +20,9 @@ def calculate_ema(values, alpha):
 
 # Problem constants
 K = 3 # Number of users
-L = 9 # Number of lamps
+L = 4 # Number of lamps
 G = np.loadtxt("G") # Describe the channel
-p = np.array([7.74903481e-07, 1.44155904e+01, 6.11280099e+00, 3.00493992e+00, 1.81572075e-06, 6.07339084e+00, 1.07330140e-06, 1.63758571e+01, 5.73877204e+00])
+p = np.loadtxt("../../Power/Localization_cvx/kono_pawa_opt_w")
 
 # sigma_max = 10**-7
 sigma_n = np.ones(K)*10**-11
